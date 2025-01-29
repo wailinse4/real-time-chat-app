@@ -1,5 +1,6 @@
 import User from "../models/User.js"
 import bcrypt from "bcrypt"
+import generateToken from "../utilities/generateTokenUtils.js"
 
 export const signup = async (req, res) => {
     const { fullName, username, password, email } = req.body
@@ -35,8 +36,10 @@ export const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt)
         
         const newUser = await User.create({ fullName, username, password: hashedPassword, email })
-        res.status(201).json({ message: "User Created", data: newUser })
 
+        const token = generateToken(newUser._id) 
+
+        res.status(201).json({ message: "User Created", data: newUser })
     }
     catch(error) {
         res.status(500).json({ message: "Internal Server Error" })
