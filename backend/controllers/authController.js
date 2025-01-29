@@ -1,11 +1,16 @@
 import User from "../models/User.js"
 import bcrypt from "bcrypt"
 import generateToken from "../utilities/generateTokenUtils.js"
+import setCookie from "../utilities/setCookieUtils.js"
 
 export const signup = async (req, res) => {
     const { fullName, username, password, email } = req.body
 
     try {
+        if(!fullName || !username || !password || !email) {
+            res.status(400).json({ message: "All fields are required" })
+        }
+
         const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/
         if(!usernameRegex.test(username)) {
             return res.status(400).json({ message: "Invalid username" })
@@ -38,6 +43,7 @@ export const signup = async (req, res) => {
         const newUser = await User.create({ fullName, username, password: hashedPassword, email })
 
         const token = generateToken(newUser._id) 
+        setCookie(res, token)
 
         res.status(201).json({ message: "User Created", data: newUser })
     }
