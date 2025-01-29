@@ -18,6 +18,16 @@ export const signup = async (req, res) => {
         if(!emailRegex.test(email)) {
             return res.status(400).json({ message: "Invalid email" })
         }
+
+        const existingUsername = await User.findOne({ username })
+        if(existingUsername) {
+            return res.status(400).json({ message: "Username is already taken" })
+        }
+
+        const existingEmail = await User.findOne({ email })
+        if(existingEmail) {
+            return res.status(400).json({ message: "Email is already taken" })
+        }
     }
     catch(error) {
         res.status(500).json({ message: "Internal Server Error" })
