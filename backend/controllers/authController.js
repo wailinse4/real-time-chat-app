@@ -7,10 +7,6 @@ export const signup = async (req, res) => {
     const { fullName, username, password, email } = req.body
 
     try {
-        if(!fullName || !username || !password || !email) {
-            res.status(400).json({ message: "All fields are required" })
-        }
-
         const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/
         if(!usernameRegex.test(username)) {
             return res.status(400).json({ message: "Invalid username" })
