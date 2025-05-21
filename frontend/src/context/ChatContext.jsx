@@ -5,6 +5,9 @@ import { axiosInstance } from "../lib/axios";
 import { useAuth } from "./AuthContext";
 import { useSocket } from "./SocketContext";  // <-- Import socket context here
 
+import { emitTyping, emitStopTyping } from "../services/socketService";
+
+
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
@@ -106,6 +109,15 @@ export const ChatProvider = ({ children }) => {
     getUsers();
   }, [getUsers]);
 
+  const sendTypingStatus = (isTyping) => {
+    if (!socket || !selectedUser) return;
+    if (isTyping) {
+      emitTyping(socket, selectedUser._id);
+    } else {
+      emitStopTyping(socket, selectedUser._id);
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -119,6 +131,7 @@ export const ChatProvider = ({ children }) => {
         sendMessage,
         setSelectedUser,
         authUser,
+        sendTypingStatus,
       }}
     >
       {children}

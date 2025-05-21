@@ -1,19 +1,19 @@
-// src/components/MessageList.jsx
 import { useEffect, useRef } from "react";
-import { useAuth } from "../context/AuthContext"; // To determine own messages
-import { useChat } from "../context/ChatContext"; // To access selectedUser
-import { formatMessageTime } from "../lib/utils"; // For message timestamp formatting
-import MessageSkeleton from "./skeletons/MessageSkeleton"; // For loading state
+import { useAuth } from "../context/AuthContext";
+import { useChat } from "../context/ChatContext";
+import { useSocket } from "../context/SocketContext";
+import { formatMessageTime } from "../lib/utils";
+import MessageSkeleton from "./skeletons/MessageSkeleton";
+import TypingIndicator from "./TypingIndicator";
 
 const MessageList = () => {
   const { messages, isMessagesLoading, selectedUser } = useChat();
-  const { authUser } = useAuth(); // Get authenticated user to check sender
-  const messageEndRef = useRef(null); // Ref for auto-scrolling
+  const { authUser } = useAuth();
+  const { typingUsers } = useSocket();
+  const messageEndRef = useRef(null);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     if (messageEndRef.current && messages) {
-      // Use a timeout to ensure DOM updates before scrolling
       setTimeout(() => {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
@@ -21,10 +21,9 @@ const MessageList = () => {
   }, [messages]);
 
   if (isMessagesLoading) {
-    return <MessageSkeleton />; // Show skeleton while loading messages
+    return <MessageSkeleton />;
   }
 
-  // Display message if no user is selected or no messages yet
   if (!selectedUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-base-content/70">
@@ -41,6 +40,8 @@ const MessageList = () => {
     );
   }
 
+  const isTyping = typingUsers.includes(selectedUser._id);
+
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map((message, index) => {
@@ -50,7 +51,7 @@ const MessageList = () => {
           <div
             key={message._id}
             className={`chat ${isOwnMessage ? "chat-end" : "chat-start"}`}
-            ref={isLastMessage ? messageEndRef : null} // Attach ref to the last message
+            ref={isLastMessage ? messageEndRef : null}
           >
             <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
@@ -82,6 +83,10 @@ const MessageList = () => {
           </div>
         );
       })}
+
+      {isTyping && <TypingIndicator />}
+
+      <div ref={messageEndRef} />
     </div>
   );
 };
