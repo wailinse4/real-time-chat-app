@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useChatStore } from "../store/useChatStore";
+import { useChat } from "../context/ChatContext";  // <-- import ChatContext hook
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -7,10 +7,13 @@ const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+
+  const { sendMessage } = useChat();  // <-- useChat from context
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     if (!file.type.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
@@ -38,12 +41,12 @@ const MessageInput = () => {
         image: imagePreview,
       });
 
-      // Clear form
       setText("");
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
+      toast.error("Failed to send message");
     }
   };
 
@@ -106,4 +109,5 @@ const MessageInput = () => {
     </div>
   );
 };
+
 export default MessageInput;

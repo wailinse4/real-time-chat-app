@@ -1,10 +1,10 @@
 import { X } from "lucide-react";
-import { useAuthStore } from "../store/useAuthStore";
-import { useChatStore } from "../store/useChatStore";
+import { useSocket } from "../context/SocketContext";  // <-- changed here
+import { useChat } from "../context/ChatContext";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { selectedUser, setSelectedUser } = useChat();
+  const { onlineUsers } = useSocket();  // <-- get onlineUsers from SocketContext now
 
   return (
     <div className="p-2.5 border-b border-base-300">
@@ -13,15 +13,15 @@ const ChatHeader = () => {
           {/* Avatar */}
           <div className="avatar">
             <div className="size-10 rounded-full relative">
-              <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} />
+              <img src={selectedUser?.profilePic || "/avatar.png"} alt={selectedUser?.fullName} />
             </div>
           </div>
 
           {/* User info */}
           <div>
-            <h3 className="font-medium">{selectedUser.fullName}</h3>
+            <h3 className="font-medium">{selectedUser?.fullName}</h3>
             <p className="text-sm text-base-content/70">
-              {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
+              {onlineUsers.includes(selectedUser?._id) ? "Online" : "Offline"}
             </p>
           </div>
         </div>
@@ -34,4 +34,5 @@ const ChatHeader = () => {
     </div>
   );
 };
+
 export default ChatHeader;

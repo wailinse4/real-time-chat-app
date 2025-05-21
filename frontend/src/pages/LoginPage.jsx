@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuth } from "../context/AuthContext";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
@@ -10,7 +10,8 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const { login, isLoggingIn } = useAuthStore();
+
+  const { login, isLoggingIn } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +27,7 @@ const LoginPage = () => {
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
               <div
-                className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20
-              transition-colors"
+                className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors"
               >
                 <MessageSquare className="w-6 h-6 text-primary" />
               </div>
@@ -48,7 +48,7 @@ const LoginPage = () => {
                 </div>
                 <input
                   type="email"
-                  className={`input input-bordered w-full pl-10`}
+                  className="input input-bordered w-full pl-10"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -66,7 +66,7 @@ const LoginPage = () => {
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`input input-bordered w-full pl-10`}
+                  className="input input-bordered w-full pl-10"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -116,4 +116,5 @@ const LoginPage = () => {
     </div>
   );
 };
+
 export default LoginPage;

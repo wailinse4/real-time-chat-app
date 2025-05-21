@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import path from "path";
+import morgan from "morgan"
 
 import { connectDB } from "./lib/db.js";
 
@@ -24,9 +25,11 @@ app.use(
     credentials: true,
   })
 );
+app.use(morgan("dev"))
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuth } from "../context/AuthContext"; // Updated import to use context
 import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 
 const Navbar = () => {
-  const { logout, authUser } = useAuthStore();
+  const { logout, authUser } = useAuth(); // Use Auth Context instead of store
 
   return (
     <header
@@ -24,10 +24,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <Link
               to={"/settings"}
-              className={`
-              btn btn-sm gap-2 transition-colors
-              
-              `}
+              className="btn btn-sm gap-2 transition-colors"
             >
               <Settings className="w-4 h-4" />
               <span className="hidden sm:inline">Settings</span>
@@ -35,7 +32,7 @@ const Navbar = () => {
 
             {authUser && (
               <>
-                <Link to={"/profile"} className={`btn btn-sm gap-2`}>
+                <Link to={"/profile"} className="btn btn-sm gap-2">
                   <User className="size-5" />
                   <span className="hidden sm:inline">Profile</span>
                 </Link>
@@ -52,4 +49,5 @@ const Navbar = () => {
     </header>
   );
 };
+
 export default Navbar;

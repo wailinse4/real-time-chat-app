@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useChatStore } from "../store/useChatStore";
-import { useAuthStore } from "../store/useAuthStore";
+import { useChat } from "../context/ChatContext";
+import { useSocket } from "../context/SocketContext"; // <-- changed import here
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChat();
+  const { onlineUsers } = useSocket(); // <-- changed to useSocket
 
-  const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Sidebar = () => {
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-        {/* TODO: Online filter toggle */}
+
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -67,7 +67,6 @@ const Sidebar = () => {
               )}
             </div>
 
-            {/* User info - only visible on larger screens */}
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.fullName}</div>
               <div className="text-sm text-zinc-400">
@@ -84,4 +83,5 @@ const Sidebar = () => {
     </aside>
   );
 };
+
 export default Sidebar;

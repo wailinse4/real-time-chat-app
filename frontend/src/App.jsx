@@ -3,25 +3,33 @@ import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuthStore } from "./store/useAuthStore";
-import { useThemeStore } from "./store/useThemeStore";
+import { useAuth } from "./context/AuthContext";       // Auth context
+import { useChat } from "./context/ChatContext";       // Chat context
+import { useTheme } from "./context/ThemeContext";     // Theme context
+import { useSocket } from "./context/SocketContext";   // <-- Import Socket context here
+
 import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
-  const { theme } = useThemeStore();
+  // Use context hooks
+  const { authUser, isCheckingAuth, checkAuth } = useAuth();
+  const { users: chatUsers } = useChat();
+  const { theme } = useTheme();
 
-  console.log({ onlineUsers });
+  // Get onlineUsers from Socket context now
+  const { onlineUsers } = useSocket();
+
+  console.log({ onlineUsers, chatUsers });
 
   useEffect(() => {
-    checkAuth();
+    if (checkAuth) checkAuth();
   }, [checkAuth]);
 
   console.log({ authUser });
@@ -49,4 +57,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
